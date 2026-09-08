@@ -17,8 +17,3 @@ Progetto universitario di **Pianificazione Automatica** (PiA) relativo al contro
 ## Strumenti
 
 - **MATLAB / Simulink**
-
-## Autori
-
-- Andrea Rosini (`rosiniand`)
-- Corraini
