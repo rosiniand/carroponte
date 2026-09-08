@@ -1,0 +1,24 @@
+# MATLAB
+*.asv
+*.m~
+*.mex*
+*.mlapp
+*.mlx
+*.p
+octave-workspace
+
+# Simulink autosave/cache
+*.slxc
+slprj/
+.slprj/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Compiled MEX files
+*.mexw32
+*.mexw64
+*.mexmaci64
+*.mexmaca64

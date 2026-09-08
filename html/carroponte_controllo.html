@@ -1,0 +1,468 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>carroponte_controllo</title>
+<meta name="generator" content="MATLAB 23.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2024-05-17">
+<meta name="DC.source" content="carroponte_controllo.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#2">Parametri di sistema e condizioni iniziali</a>
+</li>
+<li>
+<a href="#3">Definizione condizioni di equilibrio per linearizzazione e di tempo</a>
+</li>
+<li>
+<a href="#4">Risposta libera</a>
+</li>
+<li>
+<a href="#5">Linearizzazione</a>
+</li>
+<li>
+<a href="#6">Poli e zeri</a>
+</li>
+<li>
+<a href="#7">Confronto linearizzazione e non lineare</a>
+</li>
+<li>
+<a href="#8">Progettazione di Controllore</a>
+</li>
+<li>
+<a href="#9">Confronto sistema con differenti Controllori</a>
+</li>
+<li>
+<a href="#10">Commenti finali</a>
+</li>
+</ul>
+</div>
+<pre class="codeinput">clear <span class="string">all</span>;
+close <span class="string">all</span>;
+clc;
+</pre>
+<h2 id="2">Parametri di sistema e condizioni iniziali</h2>
+<p>Definizone di parametri</p>
+<pre class="codeinput">mm = 1000;  <span class="comment">% kg</span>
+mc = 300;   <span class="comment">% kg</span>
+cc = 5000;  <span class="comment">% N*s/m</span>
+cm = 100;   <span class="comment">% N*s/m</span>
+L = 2.5;    <span class="comment">% m</span>
+g = 9.81;   <span class="comment">% m/s^2</span>
+xc_0 = 0;               <span class="comment">% m</span>
+xc_dot_0 = 0;           <span class="comment">% m/s</span>
+alpha_0 = 80 * pi/180;  <span class="comment">% rad</span>
+alpha_dot_0 = 0;        <span class="comment">% rad/s</span>
+</pre>
+<h2 id="3">Definizione condizioni di equilibrio per linearizzazione e di tempo</h2>
+<pre class="codeinput">dt = 0.001;
+tempo = 0:0.001:30;
+alpha_dot_eq = 0;
+alpha_eq = pi/2;
+xc_dot_eq = 0;
+xc_eq = 0;
+</pre>
+<h2 id="4">Risposta libera</h2>
+<p>Si nota che le variabili non stanno oscillando ma sono costanti a meno di errori macchina</p>
+<pre class="codeinput">lib=sim(<span class="string">"modello_non_lineare.slx"</span>);
+alp_lib=lib.yout{1}.Values;
+xc_lib=lib.yout{2}.Values;
+
+figure;
+title(<span class="string">"Evoluzione libera della posizione"</span>)
+plot(xc_lib, <span class="string">'linewidth'</span>,2,<span class="string">'linestyle'</span>,<span class="string">'--'</span>)
+xlabel(<span class="string">'t [s]'</span>)
+ylabel(<span class="string">'xc [m]'</span>)
+hold <span class="string">on</span>
+
+figure;
+title(<span class="string">"Evoluzione libera dell'angolo"</span>)
+plot(alp_lib,<span class="string">'linewidth'</span>,2,<span class="string">'linestyle'</span>,<span class="string">'--'</span>)
+xlabel(<span class="string">'t [s]'</span>)
+ylabel(<span class="string">'alpha [rad]'</span>)
+</pre>
+<img vspace="5" hspace="5" src="carroponte_controllo_01.png" alt=""> <img vspace="5" hspace="5" src="carroponte_controllo_02.png" alt=""> <h2 id="5">Linearizzazione</h2>
+<p>Osserviamo un picco di risonanza in alpha a 2 rad/s Mentre in xc si vede un andamento decrescente fin dalle prime frequenze, ci aspettiamo di trovare un polo nell'origine nella funzione di trasferimento che possa spiegare il comportamento da integratore</p>
+<pre class="codeinput">sim(<span class="string">'modello_linearizzazione.slx'</span>);
+
+A = modello_linearizzazione_Timed_Based_Linearization.a;
+B = modello_linearizzazione_Timed_Based_Linearization.b;
+C = modello_linearizzazione_Timed_Based_Linearization.c;
+D = modello_linearizzazione_Timed_Based_Linearization.d;
+sys = ss(A, B, C, D);
+G = tf(sys);
+bode(sys);
+</pre>
+<img vspace="5" hspace="5" src="carroponte_controllo_03.png" alt=""> <h2 id="6">Poli e zeri</h2>
+<p>Come avevamo ipotizzato si trovano per G_x un polo nell'origine Mentre in G_alpha ci sono due coppie di poli e zeri molto vicini tra di loro, generano il picco di risonanza</p>
+<pre class="codeinput">Galpha = G(1, 1);
+Gx = G(2, 1);
+
+figure;
+pzmap(Galpha)
+
+figure;
+pzmap(Gx);
+</pre>
+<img vspace="5" hspace="5" src="carroponte_controllo_04.png" alt=""> <img vspace="5" hspace="5" src="carroponte_controllo_05.png" alt=""> <h2 id="7">Confronto linearizzazione e non lineare</h2>
+<p>Simuliamo con una forzante identica di ampiezza di 10^4 per osservare una risposta nell'ordine dell'unit&agrave;, visto che nel diagramma di Bode ci troviamo a una magnitudine di circa 80 dB su entrambi i modelli alla frequenza di risonanza (dove il grafico di bode di xc ha un picco) Infatti, &egrave; il punto di maggior criticit&agrave; del sistema. Osserviamo componenti anarmoniche in modello non lineare Mentre si osservano delle curve che descrivono un andamento non periodiche piuttosto accettuante in xc dove a transitorio esaurito la risposta a forzante sinusoidale &egrave; effettivamente sinusoidale, seppur su alpha l'errore &egrave; trascurabile e segue bene il modello vero, Sar&agrave; invece da valutare ad alte frequenze cosa accade al modello lineare quando si esce dalla regione di equilibrio dove &egrave; stato definito, sopra certa soglia aumenteranno i comportamenti non lineari del carroponte.</p>
+<pre class="codeinput">val=sim(<span class="string">"validazione_linearizzato.slx"</span>);
+xc_l=val.xc_l;
+xc_nl=val.xc_nl;
+alp_l=val.alp_l;
+alp_nl=val.alp_nl;
+
+figure;
+title(<span class="string">"Confronto tra le posizioni nei due modelli"</span>)
+plot(xc_l, <span class="string">":"</span>,<span class="string">"LineWidth"</span>,2)
+hold <span class="string">on</span>
+plot(xc_nl, <span class="string">'linewidth'</span>,2,<span class="string">'linestyle'</span>,<span class="string">'--'</span>)
+legend(<span class="string">"Posizione nel modello linearizzato"</span>, <span class="string">"Posizione nel modello non lineare"</span>)
+xlabel(<span class="string">'t [s]'</span>)
+ylabel(<span class="string">'xc [m]'</span>)
+
+figure;
+title(<span class="string">"Confronto tra gli angoli nei due modelli"</span>)
+plot(alp_l, <span class="string">":"</span>, <span class="string">"LineWidth"</span>, 2)
+hold <span class="string">on</span>
+plot(alp_nl, <span class="string">'linewidth'</span>,2,<span class="string">'linestyle'</span>,<span class="string">'--'</span>)
+legend(<span class="string">"Posizione angolare nel modello linearizzato"</span>, <span class="string">"Posizione angolare nel modello non lineare"</span>)
+xlabel(<span class="string">'t [s]'</span>)
+ylabel(<span class="string">'alpha [rad]'</span>)
+</pre>
+<img vspace="5" hspace="5" src="carroponte_controllo_06.png" alt=""> <img vspace="5" hspace="5" src="carroponte_controllo_07.png" alt=""> <img vspace="5" hspace="5" src="carroponte_controllo_08.png" alt=""> <h2 id="8">Progettazione di Controllore</h2>
+<p>Dal momento che in xc &egrave; gi&agrave; presente un polo nell'origine, l'azione dell'integratore di eliminare le fluttuazioni dovute all'errore &egrave; gi&agrave; incorporata nel sistema stesso L'uso di un controllore solo proporzionale, sebbene, spostando il grafico di bode di xc permette di avere una frequenza di taglio omega_p minore e dunque una maggiore rapidit&agrave; ad arrivare alla posizione di equilibrio senza alterare la dinamica di xc, ci&ograve; comporta un certo costo nelle oscillazioni di alpha, che aumentano profondamente attorno alla risonanza. Una azione di controllo si rispecchia sulla dinamica di alpha troppo negativamente per poter accettare il controllore proporzionale. Infatti, le oscillazioni possono evolvere in una dinamica reale del sistema non lineare e influenzano anche i tempi di assestamento, contro ci&ograve; che si poteva pensare con un modello con alta risposta proporzionale. Perci&ograve; la scelta &egrave; di costruire un controllore adhoc per elominare alcune dinamiche infelici e non desiderate del sistema (lecito se ci si tiene lontano dalle regioni con parte reale positiva, ovvero divergente) Elimino poli complessi coniugati che sono pi&ugrave; importanti</p>
+<pre class="codeinput">[z, p, k]=zpkdata(Gx, <span class="string">"v"</span>);
+s=tf(<span class="string">"s"</span>);
+Numerator = (s-p(3)) * (s-p(4));
+Denominator = (s-z(1)) * (s-z(2));
+C = 5000 * Numerator/Denominator;
+
+figure
+pzmap(C)
+</pre>
+<img vspace="5" hspace="5" src="carroponte_controllo_09.png" alt=""> <h2 id="9">Confronto sistema con differenti Controllori</h2>
+<pre class="codeinput">sim(<span class="string">"modello_carroponte_controllo.slx"</span>)
+
+figure
+plot(tempo, xc_simulink_Forzata, <span class="string">"LineWidth"</span>, 2)
+hold <span class="string">on</span>
+plot(tempo, xc_simulink_Proporzionale, <span class="string">"LineWidth"</span>, 2)
+hold <span class="string">on</span>
+plot(tempo, xc_simulink_Dinamico, <span class="string">"LineWidth"</span>,2)
+hold <span class="string">on</span>
+legend(<span class="string">"Nessun controllo"</span>, <span class="string">"Controllo proporzionale"</span>, <span class="string">"Controllo con cancellazione di zeri e poli"</span>)
+title(<span class="string">"Risposta libera di posizione"</span>)
+ylabel(<span class="string">"Posizione xc [m]"</span>)
+xlabel(<span class="string">"Tempo [s]"</span>)
+grid <span class="string">on</span>
+
+figure
+plot(tempo, alpha_simulink_Forzata, <span class="string">"LineWidth"</span>, 2)
+hold <span class="string">on</span>
+plot(tempo, alpha_simulink_Proporzionale, <span class="string">"LineWidth"</span>, 2)
+hold <span class="string">on</span>
+plot(tempo, alpha_simulink_Dinamico, <span class="string">"LineWidth"</span>,2)
+hold <span class="string">on</span>
+legend(<span class="string">"Nessun controllo"</span>, <span class="string">"Controllo proporzionale"</span>, <span class="string">"Controllo con cancellazione di zeri e poli"</span>)
+title(<span class="string">"Risposta libera di angolo alpha"</span>)
+ylabel(<span class="string">"Posizione angolare \alpha [rad]"</span>)
+xlabel(<span class="string">"Tempo [s]"</span>)
+grid <span class="string">on</span>
+</pre>
+<pre class="codeoutput">Warning: Matching "From" for "Goto" '&lt;a href="matlab:open_and_hilite_hyperlink ('modello_carroponte_controllo/Goto','error')"&gt;modello_carroponte_controllo/Goto&lt;/a&gt;' not
+found 
+Warning: Matching "From" for "Goto" '&lt;a href="matlab:open_and_hilite_hyperlink ('modello_carroponte_controllo/Goto1','error')"&gt;modello_carroponte_controllo/Goto1&lt;/a&gt;' not
+found 
+Warning: Matching "From" for "Goto" '&lt;a href="matlab:open_and_hilite_hyperlink ('modello_carroponte_controllo/Goto2','error')"&gt;modello_carroponte_controllo/Goto2&lt;/a&gt;' not
+found 
+Warning: Matching "From" for "Goto" '&lt;a href="matlab:open_and_hilite_hyperlink ('modello_carroponte_controllo/Goto3','error')"&gt;modello_carroponte_controllo/Goto3&lt;/a&gt;' not
+found 
+Warning: Matching "From" for "Goto" '&lt;a href="matlab:open_and_hilite_hyperlink ('modello_carroponte_controllo/Goto4','error')"&gt;modello_carroponte_controllo/Goto4&lt;/a&gt;' not
+found 
+Warning: Matching "From" for "Goto" '&lt;a href="matlab:open_and_hilite_hyperlink ('modello_carroponte_controllo/Goto5','error')"&gt;modello_carroponte_controllo/Goto5&lt;/a&gt;' not
+found 
+Warning: Matching "From" for "Goto" '&lt;a href="matlab:open_and_hilite_hyperlink ('modello_carroponte_controllo/Goto6','error')"&gt;modello_carroponte_controllo/Goto6&lt;/a&gt;' not
+found 
+Warning: Matching "From" for "Goto" '&lt;a href="matlab:open_and_hilite_hyperlink ('modello_carroponte_controllo/Goto7','error')"&gt;modello_carroponte_controllo/Goto7&lt;/a&gt;' not
+found 
+</pre>
+<img vspace="5" hspace="5" src="carroponte_controllo_10.png" alt=""> <img vspace="5" hspace="5" src="carroponte_controllo_11.png" alt=""> <h2 id="10">Commenti finali</h2>
+<p>Prima di tutto si osserva che senza il controllore il sistema non raggiunge la posizione di equilibrio, mantenendo fisso un certo errore. Il controllore proporzionale, seppur raggiungendo lo scopo di far tendere alla posizione di equilibrio il carroponte, manifesta delle oscillazioni piuttosto ampie, a differenza dell'ultimo controllore che ha oscillazioni molto pi&ugrave; smorzate In ogni caso anche il miglior regolatore presenta talune oscillazioni, ci&ograve; avviene perch&eacute;, nel risolvere i comportamenti oscillatori abbiamo cancellato i poli e gli zeri del sistema linearizzato, mentre la dinamica reale non lineare &egrave; approssimata, cio&eacute; in definitiva non stiamo esattamente eliminando i nodi del problema ma ci siamo solo arrivati vicini Risultati simili non valgono in relazione alla seconda variabile Infatti al netto di avere migliorato l'assestamento di xc, abbiamo ottenuto una leggera oscillazione di alpha attorno al punto di equilibrio. In definitiva, la soluzione possiamo dire essere convincente perch&eacute; a fronte di una limitata sovraelongazione e un tempo di assestamento decisamente migliore, il costo da pagare di tale operazione &egrave; un oscillazione di alpha limitata</p>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+clear all; 
+close all;
+clc;
+
+%% Parametri di sistema e condizioni iniziali
+% Definizone di parametri 
+mm = 1000;  % kg
+mc = 300;   % kg
+cc = 5000;  % N*s/m
+cm = 100;   % N*s/m
+L = 2.5;    % m
+g = 9.81;   % m/s^2
+xc_0 = 0;               % m
+xc_dot_0 = 0;           % m/s
+alpha_0 = 80 * pi/180;  % rad
+alpha_dot_0 = 0;        % rad/s
+
+%% Definizione condizioni di equilibrio per linearizzazione e di tempo
+dt = 0.001;
+tempo = 0:0.001:30;
+alpha_dot_eq = 0;
+alpha_eq = pi/2;
+xc_dot_eq = 0;
+xc_eq = 0;
+
+%% Risposta libera
+% Si nota che le variabili non stanno oscillando ma sono costanti a meno di
+% errori macchina
+
+lib=sim("modello_non_lineare.slx");
+alp_lib=lib.yout{1}.Values;
+xc_lib=lib.yout{2}.Values;
+
+figure;
+title("Evoluzione libera della posizione")
+plot(xc_lib, 'linewidth',2,'linestyle','REPLACE_WITH_DASH_DASH')
+xlabel('t [s]')
+ylabel('xc [m]')
+hold on
+
+figure;
+title("Evoluzione libera dell'angolo")
+plot(alp_lib,'linewidth',2,'linestyle','REPLACE_WITH_DASH_DASH')
+xlabel('t [s]')
+ylabel('alpha [rad]')
+
+
+%% Linearizzazione
+% Osserviamo un picco di risonanza in alpha a 2 rad/s
+% Mentre in xc si vede un andamento decrescente fin dalle prime frequenze, ci 
+% aspettiamo di trovare un polo nell'origine nella funzione di trasferimento
+% che possa spiegare il comportamento da integratore
+
+sim('modello_linearizzazione.slx');
+
+A = modello_linearizzazione_Timed_Based_Linearization.a;
+B = modello_linearizzazione_Timed_Based_Linearization.b;
+C = modello_linearizzazione_Timed_Based_Linearization.c;
+D = modello_linearizzazione_Timed_Based_Linearization.d;
+sys = ss(A, B, C, D);
+G = tf(sys);
+bode(sys);
+
+%% Poli e zeri
+% Come avevamo ipotizzato si trovano per G_x un polo nell'origine
+% Mentre in G_alpha ci sono due coppie di poli e zeri molto vicini tra di
+% loro, generano il picco di risonanza
+
+Galpha = G(1, 1);
+Gx = G(2, 1);
+
+figure;
+pzmap(Galpha)
+
+figure;
+pzmap(Gx);
+
+%% Confronto linearizzazione e non lineare
+% Simuliamo con una forzante identica di ampiezza di 10^4 per osservare una risposta
+% nell'ordine dell'unità, visto che nel diagramma di Bode ci troviamo a una 
+% magnitudine di circa 80 dB su entrambi i modelli alla frequenza di
+% risonanza (dove il grafico di bode di xc ha un picco)
+% Infatti, è il punto di maggior criticità del sistema.
+% Osserviamo componenti anarmoniche in modello non lineare
+% Mentre si osservano delle curve che descrivono un andamento non periodiche 
+% piuttosto accettuante in xc dove a transitorio esaurito la risposta a forzante
+% sinusoidale è effettivamente sinusoidale, seppur su alpha l'errore è
+% trascurabile e segue bene il modello vero, 
+% Sarà invece da valutare ad alte frequenze cosa accade al modello lineare 
+% quando si esce dalla regione di equilibrio dove è stato definito, sopra certa 
+% soglia aumenteranno i comportamenti non lineari del carroponte.
+
+val=sim("validazione_linearizzato.slx");
+xc_l=val.xc_l;
+xc_nl=val.xc_nl;
+alp_l=val.alp_l;
+alp_nl=val.alp_nl;
+
+figure;
+title("Confronto tra le posizioni nei due modelli")
+plot(xc_l, ":","LineWidth",2)
+hold on
+plot(xc_nl, 'linewidth',2,'linestyle','REPLACE_WITH_DASH_DASH')
+legend("Posizione nel modello linearizzato", "Posizione nel modello non lineare")
+xlabel('t [s]')
+ylabel('xc [m]')
+
+figure;
+title("Confronto tra gli angoli nei due modelli")
+plot(alp_l, ":", "LineWidth", 2)
+hold on
+plot(alp_nl, 'linewidth',2,'linestyle','REPLACE_WITH_DASH_DASH')
+legend("Posizione angolare nel modello linearizzato", "Posizione angolare nel modello non lineare")
+xlabel('t [s]')
+ylabel('alpha [rad]')
+
+%% Progettazione di Controllore
+% Dal momento che in xc è già presente un polo nell'origine, l'azione
+% dell'integratore di eliminare le fluttuazioni dovute all'errore è già
+% incorporata nel sistema stesso
+% L'uso di un controllore solo proporzionale, sebbene, spostando il grafico
+% di bode di xc permette di avere una frequenza di taglio omega_p minore e
+% dunque una maggiore rapidità ad arrivare alla posizione di equilibrio
+% senza alterare la dinamica di xc, ciò comporta un certo costo nelle
+% oscillazioni di alpha, che aumentano profondamente attorno alla
+% risonanza. Una azione di controllo si rispecchia sulla dinamica di alpha
+% troppo negativamente per poter accettare il controllore proporzionale.
+% Infatti, le oscillazioni possono evolvere in una dinamica reale del
+% sistema non lineare e influenzano anche i tempi di assestamento, contro
+% ciò che si poteva pensare con un modello con alta risposta proporzionale.
+% Perciò la scelta è di costruire un controllore adhoc per elominare alcune
+% dinamiche infelici e non desiderate del sistema (lecito se ci si tiene
+% lontano dalle regioni con parte reale positiva, ovvero divergente)
+% Elimino poli complessi coniugati che sono più importanti
+
+[z, p, k]=zpkdata(Gx, "v");
+s=tf("s");
+Numerator = (s-p(3)) * (s-p(4));
+Denominator = (s-z(1)) * (s-z(2));
+C = 5000 * Numerator/Denominator;
+
+figure
+pzmap(C)
+
+%% Confronto sistema con differenti Controllori
+sim("modello_carroponte_controllo.slx")
+
+figure
+plot(tempo, xc_simulink_Forzata, "LineWidth", 2)
+hold on
+plot(tempo, xc_simulink_Proporzionale, "LineWidth", 2)
+hold on
+plot(tempo, xc_simulink_Dinamico, "LineWidth",2)
+hold on
+legend("Nessun controllo", "Controllo proporzionale", "Controllo con cancellazione di zeri e poli")
+title("Risposta libera di posizione")
+ylabel("Posizione xc [m]")
+xlabel("Tempo [s]")
+grid on
+
+figure
+plot(tempo, alpha_simulink_Forzata, "LineWidth", 2)
+hold on
+plot(tempo, alpha_simulink_Proporzionale, "LineWidth", 2)
+hold on
+plot(tempo, alpha_simulink_Dinamico, "LineWidth",2)
+hold on
+legend("Nessun controllo", "Controllo proporzionale", "Controllo con cancellazione di zeri e poli")
+title("Risposta libera di angolo alpha")
+ylabel("Posizione angolare \alpha [rad]")
+xlabel("Tempo [s]")
+grid on
+
+%% Commenti finali
+% Prima di tutto si osserva che senza il controllore il sistema non
+% raggiunge la posizione di equilibrio, mantenendo fisso un certo errore.
+% Il controllore proporzionale, seppur raggiungendo lo scopo di far tendere
+% alla posizione di equilibrio il carroponte, manifesta delle oscillazioni
+% piuttosto ampie, a differenza dell'ultimo controllore che ha oscillazioni
+% molto più smorzate
+% In ogni caso anche il miglior regolatore presenta talune oscillazioni, ciò
+% avviene perché, nel risolvere i comportamenti oscillatori abbiamo cancellato i
+% poli e gli zeri del sistema linearizzato, mentre la dinamica reale non lineare
+% è approssimata, cioé in definitiva non stiamo esattamente eliminando i
+% nodi del problema ma ci siamo solo arrivati vicini
+% Risultati simili non valgono in relazione alla seconda variabile
+% Infatti al netto di avere migliorato l'assestamento di xc, abbiamo ottenuto
+% una leggera oscillazione di alpha attorno al punto di equilibrio.
+% In definitiva, la soluzione possiamo dire essere convincente perché
+% a fronte di una limitata sovraelongazione e un tempo di
+% assestamento decisamente migliore, il costo da pagare di tale operazione
+% è un oscillazione di alpha limitata
+
+
+##### SOURCE END #####
+-->
+</body>
+</html>
